@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--主题颜色-->
+    <!--主色-->
+    <color name="colorPrimary">#ffffff</color>
+    <!--主深色-->
+    <color name="colorPrimaryDark">#28aae6</color>
+    <!--强调色-->
+    <color name="colorAccent">#3aa6ff</color>
+
+    <!--分割线颜色-->
+    <color name="divideWhite">#c6c6c6</color>
+
+    <color name="bg_white_home">#f6f7fb</color>
+    <color name="bg_accent0">#8F95BB</color>
+    <color name="white">#ffffff</color>
+    <!--加载动画颜色-->
+    <color name="triangle">#aa72d572</color>
+    <color name="circle">#aa738ffe</color>
+    <color name="rect">#91d1ec</color>
+</resources>

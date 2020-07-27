@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_white_home"
+    android:id="@+id/content">
+
+    <!--顶部标题栏-->
+    <RelativeLayout
+        android:id="@+id/ly_top_bar"
+        style="@style/page_top_bar"
+
+        >
+
+        <TextView
+            android:id="@+id/txt_topbar"
+            style="@style/page_top_txt"
+            android:text="@string/top_text_home" />
+
+    </RelativeLayout>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.tuesda.walker.circlerefresh.CircleRefreshLayout
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:AniBackColor="@color/bg_accent0"
+            app:AniForeColor="@color/bg_white_home"
+            app:CircleSmaller="6"
+            android:id="@+id/refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            >
+
+
+            <ListView
+                android:id="@+id/equipment_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@color/white"
+                android:dividerHeight="0dp"
+                >
+
+            </ListView>
+
+        </com.tuesda.walker.circlerefresh.CircleRefreshLayout>
+
+        <com.quickst.mComponent.loadingView
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
+
+
+</LinearLayout>
