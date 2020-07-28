@@ -5,53 +5,104 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.quickst.R;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+public class videoListAdapter  extends BaseAdapter {
+    private int resourceId;
+    private Context mContext;
+    private List<Video> data;
 
-public class mainPresenterImp extends mainPresenter<mainModel, mainView>{
-    public void onViewDestroy(){
-        if (model != null) {
-            model.stopRequest();
-        }
+    public videoListAdapter(Context context,int textViewResourceId,List<Video> objects){
+        mContext=context;
+        data=objects;
+        resourceId = textViewResourceId;
     }
 
     @Override
-    public void getVideoList(final Context mContext) {
+    public int getCount() {
+        return data == null ? 0 : data.size();
+    }
 
-        Observable.create(new ObservableOnSubscribe<List<Video>>() {
+    @Override
+    public Object getItem(int position) {
+        return data == null ? null : data.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    public View getView(int position, View convertView, ViewGroup parent){
+
+
+        View view;
+        ViewHolder viewHolder;
+        Video video=data.get(position);
+        if(convertView==null){
+            view = LayoutInflater.from(mContext).inflate(resourceId,null);
+            viewHolder=new ViewHolder();
+            viewHolder.video_row=view.findViewById(R.id.video_row);
+            viewHolder.rowImage=(ImageView)view.findViewById(R.id.video_image);
+            viewHolder.rowName=(TextView)view.findViewById(R.id.row_name);
+            viewHolder.rowStart=view.findViewById(R.id.row_start) ;
+            viewHolder.rowStartCycle=view.findViewById(R.id.row_start_cycle) ;
+            view.setTag(viewHolder);
+
+        }
+
+        else{
+            view=convertView;
+            viewHolder=(ViewHolder) view.getTag();
+        }
+
+        initView(viewHolder,video);
+        initEvent(viewHolder,video);
+
+
+        return view;
+    }
+
+    private void initView(ViewHolder viewHolder,Video video){
+
+        viewHolder.rowName.setText(video.getTitle());
+
+    }
+    private void initEvent(ViewHolder viewHolder,Video video){
+
+        viewHolder.video_row.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void subscribe(ObservableEmitter<List<Video>> emitter) throws Exception {
-                List<Video> mVideoList=new ArrayList<Video>();
+            public void onClick(View v) {
+
 
                 HashMap<String,List<Video>> allPhotosTemp = new HashMap<>();//所有照片
                 Uri mImageUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
                 String[] proj = { MediaStore.Video.Thumbnails._ID
-                        , MediaStore.Video.Thumbnails.DATA
-                        ,MediaStore.Video.Media.DURATION
-                        ,MediaStore.Video.Media.SIZE
-                        ,MediaStore.Video.Media.DISPLAY_NAME
+                        , MediaStore.Video.Thumbnails.DATA//视频的绝对路径
+                        ,MediaStore.Video.Media.DURATION//视频时长
+                        ,MediaStore.Video.Media.SIZE//视频文件的大小
+                        ,MediaStore.Video.Media.DISPLAY_NAME//视频在sd卡中的名称
                         ,MediaStore.Video.Media.DATE_MODIFIED};
                 Cursor mCursor = mContext.getContentResolver().query(mImageUri,
                         proj,
                         MediaStore.Video.Media.MIME_TYPE + "=?",
                         new String[]{"video/mp4"},
                         MediaStore.Video.Media.DATE_MODIFIED+" desc");
-                Log.e("ceshi","go");
                 if(mCursor!=null) {
-                    Log.e("ceshi","go1");
                     while (mCursor.moveToNext()) {
-                        Log.e("ceshi","go2");
                         // 获取视频的路径
                         int videoId = mCursor.getInt(mCursor.getColumnIndex(MediaStore.Video.Media._ID));
                         String path = mCursor.getString(mCursor.getColumnIndex(MediaStore.Video.Media.DATA));
@@ -86,44 +137,27 @@ public class mainPresenterImp extends mainPresenter<mainModel, mainView>{
                             //data.add(new MediaBean(MediaBean.Type.Video,path,thumbPath,duration,size,displayName));
                             continue;
                         } else {
-                           // List<Video> data = new ArrayList<>();
+                            // List<Video> data = new ArrayList<>();
                             //data.add(new MediaBean(MediaBean.Type.Video,path,thumbPath,duration,size,displayName));
-                           // allPhotosTemp.put(dirPath, data);
+                            // allPhotosTemp.put(dirPath, data);
                         }
-                        Log.e("ceshi",path);
+                        Log.e("ceshi", path+","+thumbPath+","+duration+","+size+","+displayName+",");
                     }
                     mCursor.close();
-
                 }
-                emitter.onNext(mVideoList);
+
             }
-        })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<Video>>() {
+        });
 
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(List<Video> mVideoList) {
-                        if(getView()!=null){
-
-                        }
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
     }
+
+    class ViewHolder{
+        LinearLayout video_row;
+        ImageView rowImage;
+        TextView rowName;
+        Button rowStart;
+        Button rowStartCycle;
+    }
+
+
 }

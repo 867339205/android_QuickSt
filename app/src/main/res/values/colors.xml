@@ -14,6 +14,14 @@
     <color name="bg_white_home">#f6f7fb</color>
     <color name="bg_accent0">#8F95BB</color>
     <color name="white">#ffffff</color>
+    <color name="bg_accent_2">#91d1ec</color>
+    <color name="bg_white_1">#fafbfc</color>
+    <color name="lightBlack">#2c2c2c</color>
+
+
+
+
+
     <!--加载动画颜色-->
     <color name="triangle">#aa72d572</color>
     <color name="circle">#aa738ffe</color>

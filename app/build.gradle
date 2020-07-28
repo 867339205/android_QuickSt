@@ -28,4 +28,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation project(':circlerefresh')
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.15'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 }

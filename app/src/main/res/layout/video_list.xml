@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:minHeight="150dp"
+    android:background="@color/bg_white_home"
+    >
+    <LinearLayout
+        android:id="@+id/video_row"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:padding="10dp"
+        android:layout_margin="15dp"
+        android:background="@drawable/home_list_out_bg"
+        >
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/video_image"
+            android:src="@mipmap/video"
+            android:layout_weight="4"
+            android:padding="15dp"
+            android:layout_gravity="center"
+
+            />
+
+        <LinearLayout
+            android:id="@+id/text"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="5"
+            android:layout_gravity="center|left"
+            android:gravity="center|left"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+
+            >
+            <TextView
+                android:id="@+id/row_name"
+                android:layout_height="30dp"
+                android:layout_width="wrap_content"
+                android:text="测测错错错错错错错错错错错错错错错错错错错错错"
+                android:layout_weight="2"
+                android:layout_gravity="left"
+                android:gravity="left|center"
+                android:textSize="18sp"
+                android:textColor="@color/lightBlack"
+                android:maxEms="8"
+                android:singleLine="true"
+                android:ellipsize="end"
+
+                />
+            <LinearLayout
+                android:layout_weight="3"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="6dp"
+                android:layout_marginTop="18dp"
+                >
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="15dp"
+                    android:text="播放"
+                    android:textColor="#222222"
+                    android:textSize="13sp"
+                    android:id="@+id/row_start"
+                    ></Button>
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="循环"
+                    android:textColor="#222222"
+                    android:textSize="13sp"
+                    android:id="@+id/row_start_cycle"
+                    ></Button>
+
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</LinearLayout>
