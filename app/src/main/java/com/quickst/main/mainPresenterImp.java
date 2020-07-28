@@ -36,22 +36,28 @@ public class mainPresenterImp extends mainPresenter<mainModel, mainView>{
 
                 HashMap<String,List<Video>> allPhotosTemp = new HashMap<>();//所有照片
                 Uri mImageUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                String[] proj = { MediaStore.Video.Thumbnails._ID
-                        , MediaStore.Video.Thumbnails.DATA
-                        ,MediaStore.Video.Media.DURATION
-                        ,MediaStore.Video.Media.SIZE
-                        ,MediaStore.Video.Media.DISPLAY_NAME
-                        ,MediaStore.Video.Media.DATE_MODIFIED};
+                String[] sLocalVideoColumns  = {
+                        MediaStore.Video.Media._ID, // 视频id
+                        MediaStore.Video.Media.DATA, // 视频路径
+                        MediaStore.Video.Media.SIZE, // 视频字节大小
+                        MediaStore.Video.Media.DISPLAY_NAME, // 视频名称 xxx.mp4
+                        MediaStore.Video.Media.TITLE, // 视频标题
+                        MediaStore.Video.Media.DURATION, // 视频时长
+                         };
+                String[] sLocalVideoThumbnailColumns = {
+                        MediaStore.Video.Thumbnails.DATA, // 视频缩略图路径
+                        MediaStore.Video.Thumbnails.VIDEO_ID, // 视频id
+                        MediaStore.Video.Thumbnails.WIDTH, // 视频缩略图宽度
+                        MediaStore.Video.Thumbnails.HEIGHT // 视频缩略图高度
+                };
+
                 Cursor mCursor = mContext.getContentResolver().query(mImageUri,
-                        proj,
+                        sLocalVideoColumns ,
                         MediaStore.Video.Media.MIME_TYPE + "=?",
                         new String[]{"video/mp4"},
-                        MediaStore.Video.Media.DATE_MODIFIED+" desc");
-                Log.e("ceshi","go");
-                if(mCursor!=null) {
-                    Log.e("ceshi","go1");
-                    while (mCursor.moveToNext()) {
-                        Log.e("ceshi","go2");
+                        MediaStore.Video.Media.DISPLAY_NAME+" desc");
+                if(mCursor!=null&&mCursor.moveToFirst()) {
+                    do{
                         // 获取视频的路径
                         int videoId = mCursor.getInt(mCursor.getColumnIndex(MediaStore.Video.Media._ID));
                         String path = mCursor.getString(mCursor.getColumnIndex(MediaStore.Video.Media.DATA));
@@ -82,16 +88,13 @@ public class mainPresenterImp extends mainPresenter<mainModel, mainView>{
                         String dirPath = new File(path).getParentFile().getAbsolutePath();
                         //存储对应关系
                         if (allPhotosTemp.containsKey(dirPath)) {
-                            //List<Video> data = allPhotosTemp.get(dirPath);
-                            //data.add(new MediaBean(MediaBean.Type.Video,path,thumbPath,duration,size,displayName));
                             continue;
                         } else {
-                           // List<Video> data = new ArrayList<>();
-                            //data.add(new MediaBean(MediaBean.Type.Video,path,thumbPath,duration,size,displayName));
-                           // allPhotosTemp.put(dirPath, data);
+
                         }
                         Log.e("ceshi",path);
                     }
+                    while (mCursor.moveToNext());
                     mCursor.close();
 
                 }

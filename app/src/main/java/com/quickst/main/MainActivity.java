@@ -2,12 +2,19 @@ package com.quickst.main;
 
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.hardware.input.InputManager;
+import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.InputDevice;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -22,6 +29,7 @@ import java.util.List;
 
 
 public class MainActivity extends baseActivity<mainModel, mainView, mainPresenter> implements mainView {
+   private final int SHOW_TOAST_MSG=0;
 
     //组件
     private ListView listView;
@@ -41,9 +49,23 @@ public class MainActivity extends baseActivity<mainModel, mainView, mainPresente
             //Log.e("CESHI:","收到msg"+msg.what);
             switch (msg.what)
             {
-
+                case SHOW_TOAST_MSG:
+                    showToast((String)msg.obj);
+                    break;
             }
         }
+    };
+
+    //获取usb的连接信号
+    private BroadcastReceiver mUsbStateChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Message msg = Message.obtain();
+            msg.what=SHOW_TOAST_MSG;
+            msg.obj="onReceive: " + intent.getExtras().getBoolean("connected");
+            mHandler.sendMessage(msg);
+        }
+
     };
 
 
@@ -55,6 +77,7 @@ public class MainActivity extends baseActivity<mainModel, mainView, mainPresente
 
         mVideoList.add(new Video(1,"123"));
 
+        initBroadcast();
         initView();
         initEvent();
         initList();
@@ -66,6 +89,7 @@ public class MainActivity extends baseActivity<mainModel, mainView, mainPresente
         super.onDestroy();
         // 外部类Activity生命周期结束时，同时清空消息队列 & 结束Handler生命周期
         mHandler.removeCallbacksAndMessages(null);
+        unregisterReceiver(mUsbStateChangeReceiver);//解绑usb监听
     }
 
     private void initView(){
@@ -115,18 +139,20 @@ public class MainActivity extends baseActivity<mainModel, mainView, mainPresente
     private void initList(){
         adapter=new videoListAdapter(this,R.layout.video_list,mVideoList);
         listView.setAdapter(adapter);
-
+        detectUsbWithBroadcast();
         if(presenter!=null){
             presenter.getVideoList(this);
         }
     }
+    private void initBroadcast(){
+        detectUsbWithBroadcast();//usb状态改变监听
+    }
 
-
-
-
-
-
-
+    private void detectUsbWithBroadcast() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.hardware.usb.action.USB_STATE");
+        registerReceiver(mUsbStateChangeReceiver, filter);
+    }
 
 
 
