@@ -176,6 +176,7 @@ public class videoListAdapter  extends BaseAdapter {
 
         //初始化usb
         UsbManager manager = (UsbManager) mContext.getSystemService(Context.USB_SERVICE);
+
         List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
         if (!availableDrivers.isEmpty()) {
             Log.e(TAG, "usb数:"+availableDrivers.size());
