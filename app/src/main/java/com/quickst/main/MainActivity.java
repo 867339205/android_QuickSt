@@ -9,6 +9,8 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.input.InputManager;
 import android.hardware.usb.UsbManager;
+import android.media.MediaExtractor;
+import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,11 +21,17 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.hb.dialog.myDialog.MyAlertInputDialog;
 import com.quickst.R;
 import com.quickst.baseClass.mvp.baseActivity;
 import com.quickst.mComponent.loadingView;
+import com.quickst.mGlobal.mEntity.admin;
+import com.quickst.tool.md5;
+import com.quickst.tool.sharedPreferences;
 import com.tuesda.walker.circlerefresh.CircleRefreshLayout;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +46,7 @@ public class MainActivity extends baseActivity<mainModel, mainView, mainPresente
 
     //变量
     private videoListAdapter adapter;
-    private List<Video> mVideoList=new ArrayList<Video>();
+    private List<Video> mVideoList= admin.getAdmin().getVideoList();
 
     //提供UI操作
     private Handler mHandler = new Handler()
@@ -60,10 +68,11 @@ public class MainActivity extends baseActivity<mainModel, mainView, mainPresente
     private BroadcastReceiver mUsbStateChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Message msg = Message.obtain();
+            /*Message msg = Message.obtain();
             msg.what=SHOW_TOAST_MSG;
             msg.obj="onReceive: " + intent.getExtras().getBoolean("connected");
-            mHandler.sendMessage(msg);
+            mHandler.sendMessage(msg);*/
+            admin.getAdmin().setUsbStatus(intent.getExtras().getBoolean("connected"));
         }
 
     };
@@ -75,14 +84,12 @@ public class MainActivity extends baseActivity<mainModel, mainView, mainPresente
         getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
 
-        mVideoList.add(new Video(1,"123"));
-
         initBroadcast();
         initView();
         initEvent();
         initList();
-        loading.setVisibility(View.GONE);
-        refresh_layout.setVisibility(View.VISIBLE);
+        initPass();//检测秘钥
+
     }
     @Override
     public void onDestroy(){
@@ -121,7 +128,9 @@ public class MainActivity extends baseActivity<mainModel, mainView, mainPresente
                     @Override
                     public void refreshing() {
                         // do something when refresh starts
-
+                        if(presenter!=null){
+                            presenter.getVideoList(MainActivity.this);
+                        }
                     }
 
                     @Override
@@ -132,7 +141,7 @@ public class MainActivity extends baseActivity<mainModel, mainView, mainPresente
         refresh_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                refresh_layout.finishRefreshing();
+
             }
         });
     }
@@ -155,7 +164,62 @@ public class MainActivity extends baseActivity<mainModel, mainView, mainPresente
     }
 
 
+    private void initPass(){
+        final sharedPreferences mSharedPreferences=new sharedPreferences(this);
+        if(md5.getMD5(mSharedPreferences.getPass()).equals(admin.password)){
+            //Log.e("ceshi","相同");
+            return;
 
+        }
+        else{
+            //Log.e("ceshi","不相同");
+            final MyAlertInputDialog myAlertInputDialog = new MyAlertInputDialog(this).builder()
+                    .setTitle("软件许可验证")
+                    .setEditText("请输入密码");
+            myAlertInputDialog.setCanceledOnTouchOutside(false);
+            myAlertInputDialog.setCancelable(false);
+            myAlertInputDialog.setPositiveButton("确认", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(myAlertInputDialog.getResult().equals("")||myAlertInputDialog.getResult()==null){
+                        showToast("输入密码不能为空！");
+                    }
+                    else{
+                        String pass=myAlertInputDialog.getResult();
+                        if(md5.getMD5(pass).equals(admin.password)){
+                            showToast("密码有效！");
+                            mSharedPreferences.savePass(pass);
+                            myAlertInputDialog.dismiss();
+                        }
+                        else{
+                            showToast("密码无效！");
+                        }
+                       // Log.e("ceshi",md5.getMD5(pass));
+
+                    }
+
+                }
+            });
+            myAlertInputDialog.show();
+        }
+    }
+
+
+
+    ///////提示按两次返回键退出程序////////////
+    //记录用户首次点击返回键的时间
+    private long firstTime = 0;
+
+    @Override
+    public void onBackPressed() {
+        long secondTime = System.currentTimeMillis();
+        if (secondTime - firstTime > 2000) {
+            Toast.makeText(MainActivity.this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            firstTime = secondTime;
+        } else {
+            System.exit(0);
+        }
+    }
 
 
 
@@ -177,9 +241,12 @@ public class MainActivity extends baseActivity<mainModel, mainView, mainPresente
 
 
     @Override
-    public void getVideoListTurn(List<Video> video) {
-        mVideoList.clear();
-        mVideoList.addAll(video);
+    public void getVideoListTurn() {
         adapter.notifyDataSetChanged();
+        loading.setVisibility(View.GONE);
+        refresh_layout.setVisibility(View.VISIBLE);
+        refresh_layout.finishRefreshing();
     }
+
+
 }

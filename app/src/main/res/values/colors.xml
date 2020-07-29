@@ -8,15 +8,48 @@
     <!--强调色-->
     <color name="colorAccent">#3aa6ff</color>
 
+    <!--背景色-->
+    <color name="bg_white_home">#f6f7fb</color>
+    <color name="bg_white_1">#fafbfc</color>
+    <color name="bg_white_control">#f7f8fb</color>
+    <color name="bg_white_my">#f7f8fa</color>
+    <color name="bg_white_2">#f9fafb</color>
+    <color name="bg_white_3">#f5f6f7</color>
+    <color name="bg_white_4">#f0f0f0</color>
+    <color name="bg_white_black">#e0e2e3</color>
+
+    <color name="bg_accent_i">#389CEE</color>
+    <color name="bg_accent_i0">#2B78B8</color>
+    <color name="bg_accent">#26A1DA</color>
+    <color name="bg_accent_4">#42B0E2</color>
+    <color name="bg_accent_3">#5ab7e0</color>
+    <color name="bg_accent_2">#91d1ec</color>
+    <color name="bg_accent_1">#2087B8</color>
+    <color name="bg_accent0">#8F95BB</color>
+    <color name="bg_accent_control_0">#91d1ec</color>
+    <color name="bg_accent_control_1">#79c4e4</color>
+    <color name="bg_control_topmenu">#5ab7e0</color>
+
+    <!--常用字体颜色-->
+    <color name="black">#000000</color>
+    <color name="lightBlack">#2c2c2c</color>
+    <color name="lightBlack5">#3c3c3c</color>
+    <color name="lightBlack4">#6f6f6f</color>
+    <color name="lightBlack3">#929292</color>
+    <color name="lightBlack2">#555555</color>
+    <color name="lightBlack1">#b2b2b2</color>
+    <color name="lightBlack0">#A0A0A0</color>
+    <color name="white_0">#c4c4c4</color>
+    <color name="white_2">#d7d8da</color>
+    <color name="white_1">#e0e0e0</color>
+    <color name="white">#ffffff</color>
+
     <!--分割线颜色-->
     <color name="divideWhite">#c6c6c6</color>
-
-    <color name="bg_white_home">#f6f7fb</color>
-    <color name="bg_accent0">#8F95BB</color>
-    <color name="white">#ffffff</color>
-    <color name="bg_accent_2">#91d1ec</color>
-    <color name="bg_white_1">#fafbfc</color>
-    <color name="lightBlack">#2c2c2c</color>
+    <color name="divideWhite_1">#f0eff4</color>
+    <color name="divideWhite_2">#f4f3f9</color>
+    <color name="divideWhite_3">#afafaf</color>
+    <color name="divide_accent_control">#BDDEFF</color>
 
 
 

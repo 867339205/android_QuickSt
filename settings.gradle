@@ -1,2 +1,2 @@
-include ':app', ':refresh', ':circlerefresh'
+include ':app', ':refresh', ':circlerefresh', ':usbSerialForAndroid'
 rootProject.name='QuickSt'

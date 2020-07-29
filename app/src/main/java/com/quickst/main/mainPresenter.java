@@ -12,4 +12,6 @@ public abstract class mainPresenter<M extends myModel,V extends myView> extends 
      * 获取本地视频
      */
     public abstract void getVideoList(Context mContext);
+
+
 }

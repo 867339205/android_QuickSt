@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.quickst.mGlobal.mEntity.admin;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,14 +30,17 @@ public class mainPresenterImp extends mainPresenter<mainModel, mainView>{
         }
     }
 
+
     @Override
     public void getVideoList(final Context mContext) {
+
         Observable.create(new ObservableOnSubscribe<List<Video>>() {
             @Override
             public void subscribe(ObservableEmitter<List<Video>> emitter) throws Exception {
 
-                //sleep(1000);
-                List<Video> mVideoList=new ArrayList<Video>();
+
+                List<Video> mVideoList=admin.getAdmin().getVideoList();
+                mVideoList.clear();
 
                 Uri mImageUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
                 String[] sLocalVideoColumns  = {
@@ -57,44 +62,47 @@ public class mainPresenterImp extends mainPresenter<mainModel, mainView>{
                         sLocalVideoColumns ,
                         MediaStore.Video.Media.MIME_TYPE + "=?",
                         new String[]{"video/mp4"},
-                        MediaStore.Video.Media.DISPLAY_NAME+" desc");
+                        MediaStore.Video.Media.DISPLAY_NAME+" asc");
                 if(mCursor!=null&&mCursor.moveToFirst()) {
                     do{
-
+                        Video mVideo=new Video();
                         // 获取视频的路径
-                        int videoId = mCursor.getInt(mCursor.getColumnIndex(MediaStore.Video.Media._ID));
-                        String path = mCursor.getString(mCursor.getColumnIndex(MediaStore.Video.Media.DATA));
-                        String name = mCursor.getString(mCursor.getColumnIndex(MediaStore.Video.Media.TITLE));
-                        int duration = mCursor.getInt(mCursor.getColumnIndex(MediaStore.Video.Media.DURATION));
-                        long size = mCursor.getLong(mCursor.getColumnIndex(MediaStore.Video.Media.SIZE)) / 1024; //单位kb
+                        mVideo.setId(mCursor.getInt(mCursor.getColumnIndex(MediaStore.Video.Media._ID)));
+                        mVideo.setPath(mCursor.getString(mCursor.getColumnIndex(MediaStore.Video.Media.DATA)));
+                        mVideo.setSize(mCursor.getLong(mCursor.getColumnIndex(MediaStore.Video.Media.SIZE)) / 1024);//单位kb
+                        mVideo.setDisplayName(mCursor.getString(mCursor.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME)));
+                        mVideo.setTitle(mCursor.getString(mCursor.getColumnIndex(MediaStore.Video.Media.TITLE)));
+                        mVideo.setTime(mCursor.getInt(mCursor.getColumnIndex(MediaStore.Video.Media.DURATION)));
 
-                        if (size < 0) {
+                        if (mVideo.getSize() < 0) {
                             //某些设备获取size<0，直接计算
-                            Log.e("dml", "this video size < 0 " + path);
-                            size = new File(path).length() / 1024;
+                            mVideo.setSize(new File(mVideo.getPath()).length() / 1024);
                         }
-                        String displayName = mCursor.getString(mCursor.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME));
-                        //提前生成缩略图，再获取：http://stackoverflow.com/questions/27903264/how-to-get-the-video-thumbnail-path-and-not-the-bitmap
-                        MediaStore.Video.Thumbnails.getThumbnail(mContext.getContentResolver(), videoId, MediaStore.Video.Thumbnails.MICRO_KIND, null);
-                        String[] projection = {MediaStore.Video.Thumbnails._ID, MediaStore.Video.Thumbnails.DATA};
-                        Cursor cursor = mContext.getContentResolver().query(MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI
-                                , projection
-                                , MediaStore.Video.Thumbnails.VIDEO_ID + "=?"
-                                , new String[]{videoId + ""}
-                                , null);
-                        String thumbPath = "";
-                        while (cursor.moveToNext()) {
 
-                            thumbPath = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Thumbnails.DATA));
-                        }
+                        MediaStore.Video.Thumbnails.getThumbnail(mContext.getContentResolver(), mVideo.getId(), MediaStore.Video.Thumbnails.MINI_KIND, null);
+                        Cursor cursor = mContext.getContentResolver().query(MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI
+                                , sLocalVideoThumbnailColumns
+                                , MediaStore.Video.Thumbnails.VIDEO_ID + "=?"
+                                , new String[]{mVideo.getId() + ""}
+                                , null);
+
+                        while (cursor.moveToNext()){
+                                mVideo.setImagePath(cursor.getString(cursor.getColumnIndex(MediaStore.Video.Thumbnails.DATA)));
+                                mVideo.setImageWidth(cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Thumbnails.WIDTH)));
+                                mVideo.setImageHeight(cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Thumbnails.HEIGHT)));
+                            }
+
+
+
                         cursor.close();
 
-                        Log.e("ceshi",name);
+                        mVideoList.add(mVideo);
                     }
                     while (mCursor.moveToNext());
                     mCursor.close();
 
                 }
+                sleep(1500);
                 emitter.onNext(mVideoList);
             }
         })
@@ -109,8 +117,9 @@ public class mainPresenterImp extends mainPresenter<mainModel, mainView>{
 
                     @Override
                     public void onNext(List<Video> mVideoList) {
+                        //Log.e("ceshi",""+mVideoList.size());
                         if(getView()!=null){
-
+                         getView().getVideoListTurn();
                         }
 
                     }
@@ -126,4 +135,5 @@ public class mainPresenterImp extends mainPresenter<mainModel, mainView>{
                     }
                 });
     }
+
 }
