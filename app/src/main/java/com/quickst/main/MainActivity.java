@@ -22,6 +22,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.hb.dialog.myDialog.MyAlertInputDialog;
+import com.hoho.android.usbserial.driver.UsbSerialDriver;
+import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.quickst.R;
 import com.quickst.baseClass.mvp.baseActivity;
 import com.quickst.mComponent.loadingView;
@@ -246,6 +248,7 @@ public class MainActivity extends baseActivity<mainModel, mainView, mainPresente
         loading.setVisibility(View.GONE);
         refresh_layout.setVisibility(View.VISIBLE);
         refresh_layout.finishRefreshing();
+
     }
 
 

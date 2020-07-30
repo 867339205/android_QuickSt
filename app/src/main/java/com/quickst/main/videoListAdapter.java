@@ -1,9 +1,14 @@
 package com.quickst.main;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.hardware.usb.UsbAccessory;
+import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.media.MediaExtractor;
@@ -141,6 +146,7 @@ public class videoListAdapter  extends BaseAdapter {
                                       if(file.isFile()&&file.exists()){
                                           if(file.delete()){
                                               admin.getAdmin().getVideoList().remove(video);
+                                              Toast.makeText(mContext.getApplicationContext(), "删除成功，请刷新界面", Toast.LENGTH_SHORT).show();
                                           }
                                       }
                                      }
@@ -161,6 +167,20 @@ public class videoListAdapter  extends BaseAdapter {
                videoStart(video);
             }
         });
+        viewHolder.rowStartCycle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //初始化usb
+                UsbManager manager = (UsbManager) mContext.getSystemService(Context.USB_SERVICE);
+                HashMap<String, UsbDevice> map = manager.getDeviceList();
+                if(map.size()!=0){
+                    Toast.makeText(mContext.getApplicationContext(), "循环：设备数量为："+map.size(), Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(mContext.getApplicationContext(), "循环：检测不到设备！", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
 
     }
 
@@ -179,6 +199,7 @@ public class videoListAdapter  extends BaseAdapter {
 
         List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
         if (!availableDrivers.isEmpty()) {
+            Toast.makeText(mContext.getApplicationContext(), "播放：设备数量为："+availableDrivers.size(), Toast.LENGTH_SHORT).show();
             Log.e(TAG, "usb数:"+availableDrivers.size());
 
             // Open a connection to the first available driver.
@@ -236,6 +257,9 @@ public class videoListAdapter  extends BaseAdapter {
 
 
             }
+        }
+        else{
+            Toast.makeText(mContext.getApplicationContext(), "播放：检测不到设备！", Toast.LENGTH_SHORT).show();
         }
 
     }
