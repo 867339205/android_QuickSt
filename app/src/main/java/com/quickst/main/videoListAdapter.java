@@ -101,13 +101,24 @@ public class videoListAdapter  extends BaseAdapter {
     private void initView(ViewHolder viewHolder,Video video){
 
         viewHolder.rowName.setText(video.getTitle());
-
-        if(!(new File(video.getImagePath()).exists())){
+        if(video.getImagePath()==null){
+           // Log.e("ceshi","空的视频id:"+video.getId());
             MediaStore.Video.Thumbnails.getThumbnail(mContext.getContentResolver(), video.getId(), MediaStore.Video.Thumbnails.MINI_KIND, null);
         }
-        if((new File(video.getImagePath()).exists())){
-            viewHolder.rowImage.setImageURI(Uri.parse(video.getImagePath()));
+
+        if(video.getImagePath()!=null) {
+
+            if (!(new File(video.getImagePath()).exists())){
+                //Log.e("ceshi","1视频id:"+video.getId());
+                MediaStore.Video.Thumbnails.getThumbnail(mContext.getContentResolver(), video.getId(), MediaStore.Video.Thumbnails.MINI_KIND, null);
+            }
+            if ((new File(video.getImagePath()).exists())) {
+                //Log.e("ceshi","2视频id:"+video.getId());
+                viewHolder.rowImage.setImageURI(Uri.parse(video.getImagePath()));
+            }
+
         }
+
 
 
 
